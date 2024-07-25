@@ -1,6 +1,8 @@
 package com.training.test.controller;
 
+import com.training.test.entity.RestroDetails;
 import com.training.test.model.RestroDetailsRequest;
+import com.training.test.service.LoginService;
 import com.training.test.service.RestroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,9 +13,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/restro")
 public class RestaurantController {
 
-    @Autowired
-    RestroService restroservice;
 
+    //    @Autowired
+    RestroService restroService;
+
+    //    @Autowired
+    LoginService loginService;
+
+    RestaurantController(RestroService restroService, LoginService loginService) {
+        this.restroService = restroService;
+        this.loginService = loginService;
+    }
 
     @GetMapping("/new")
     public ResponseEntity<String> getRestaurants() {
@@ -22,8 +32,7 @@ public class RestaurantController {
 
     @PostMapping("/create")
     public ResponseEntity<String> setResto(@RequestBody RestroDetailsRequest restroDetailsRequest) {
-
-        this.restroservice.processNewRestro(restroDetailsRequest);
+        this.restroService.processNewRestro(restroDetailsRequest);
 
         return new ResponseEntity<>("Restaurant create by name is " + restroDetailsRequest.getName() + " AND user is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
     }
@@ -36,6 +45,22 @@ public class RestaurantController {
     @PostMapping("/update")
     public ResponseEntity<String> update(@RequestBody RestroDetailsRequest restroDetailsRequest) {
         return new ResponseEntity<>("Restaurant updated name is " + restroDetailsRequest.getName() + " AND  new name is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
+    }
+
+
+    // 24 jun
+    //----------------------------------------------------------------
+
+    @GetMapping("/getDetails")
+    public RestroDetails getRestro() {
+        return this.restroService.getRestro();
+
+    }
+
+    @PostMapping("/updateDetails")
+    public RestroDetails updateDetails() {
+        return this.restroService.updateRestro();
+
     }
 
 }

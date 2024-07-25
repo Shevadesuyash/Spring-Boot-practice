@@ -2,28 +2,35 @@ package com.training.test.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
 
+
+@Data
 @Entity
 @Table(name = "Restro_details")
 public class RestroDetails {
 
     @Id
+    @SequenceGenerator(name="restro_sequence", sequenceName = "restro_sequence",allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "restro_sequence")
     private int id;
 
-    @Column(name = "Restro_name")
+    @Column(name = "restro_name",length = 50)
     private String name;
 
-    @Column(name = "owner_name")
-    private String owner_name;
+    @Column(name = "owner_name",length = 50)
+    private String ownerName;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address", referencedColumnName = "address_id")
-    private Restro_address_details addressDetails;
+    private RestaurantAddressDetails addressDetails;
 
-    @Column(name = "type")
-    private String type;
+    @Column(name = "restro_type")
+    private String restroType;
 
-    @Column(name = "contact_details")
-    private String contact_details;
+    @Column(name = "contact")
+    private Long contact;
+
+
 }

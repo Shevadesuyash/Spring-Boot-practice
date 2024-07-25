@@ -2,9 +2,9 @@ package com.training.test.controller;
 
 import com.training.test.entity.RestroDetails;
 import com.training.test.model.RestroDetailsRequest;
+import com.training.test.model.RestroOnlineRequest;
 import com.training.test.service.LoginService;
 import com.training.test.service.RestroService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,18 +37,18 @@ public class RestaurantController {
         return new ResponseEntity<>("Restaurant create by name is " + restroDetailsRequest.getName() + " AND user is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<String> deleteResto(@RequestBody RestroDetailsRequest restroDetailsRequest) {
-        return new ResponseEntity<>("Restaurant delete by name is " + restroDetailsRequest.getName() + " AND user is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
-    }
+//    @PostMapping("/delete")
+//    public ResponseEntity<String> deleteResto(@RequestBody RestroDetailsRequest restroDetailsRequest) {
+//        return new ResponseEntity<>("Restaurant delete by name is " + restroDetailsRequest.getName() + " AND user is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
+//    }
 
-    @PostMapping("/update")
-    public ResponseEntity<String> update(@RequestBody RestroDetailsRequest restroDetailsRequest) {
-        return new ResponseEntity<>("Restaurant updated name is " + restroDetailsRequest.getName() + " AND  new name is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
-    }
+//    @PostMapping("/update")
+//    public ResponseEntity<String> update(@RequestBody RestroDetailsRequest restroDetailsRequest) {
+//        return new ResponseEntity<>("Restaurant updated name is " + restroDetailsRequest.getName() + " AND  new name is " + restroDetailsRequest.getUsername(), HttpStatus.ACCEPTED);
+//    }
 
 
-    // 24 jun
+    // 24 july
     //----------------------------------------------------------------
 
     @GetMapping("/getDetails")
@@ -57,12 +57,23 @@ public class RestaurantController {
 
     }
 
-    @PostMapping("/updateDetails")
-    public RestroDetails updateDetails() {
-        return this.restroService.updateRestro();
+//    @PostMapping("/updateDetails")
+//    public RestroDetails updateDetails() {
+//        return this.restroService.updateRestro();
+//
+//
+//    }
+
+    //----------------------------------------------------------------
+    //25 july
+    @PostMapping("/addNew")
+    public ResponseEntity<String> AddNewRestro(@RequestBody RestroOnlineRequest restroOnlineRequest) {
+
+            this.restroService.AddNewRestro(restroOnlineRequest);
+            return new ResponseEntity<>("Restro name is "+ restroOnlineRequest.getName()+" and owner is "+ restroOnlineRequest.getOwner() +" with contact "+ restroOnlineRequest.getContact(), HttpStatus.OK);
+        }
 
 
 
-    }
 
 }

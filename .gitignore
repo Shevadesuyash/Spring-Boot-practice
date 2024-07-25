@@ -1,10 +1,6 @@
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-*.cmd
-mvnw
-.maven-wrapper.properties
+.idea/
+.mvn/
+target/
 HELP.md
+mvnw
+mvnw.cmd

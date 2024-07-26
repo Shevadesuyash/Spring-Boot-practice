@@ -3,14 +3,16 @@ package com.training.test.controller;
 import com.training.test.entity.RestroDetails;
 import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
-import com.training.test.service.LoginService;
+
 import com.training.test.service.RestroService;
+import com.training.test.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/restro")
+@CrossOrigin(origins="*")
 public class RestaurantController {
 
 
@@ -18,11 +20,11 @@ public class RestaurantController {
     RestroService restroService;
 
     //    @Autowired
-    LoginService loginService;
+    UserService userService;
 
-    RestaurantController(RestroService restroService, LoginService loginService) {
+    RestaurantController(RestroService restroService, UserService userService) {
         this.restroService = restroService;
-        this.loginService = loginService;
+        this.userService = userService;
     }
 
     @GetMapping("/new")
@@ -69,11 +71,13 @@ public class RestaurantController {
     @PostMapping("/addNew")
     public ResponseEntity<String> AddNewRestro(@RequestBody RestroOnlineRequest restroOnlineRequest) {
 
-            this.restroService.AddNewRestro(restroOnlineRequest);
-            return new ResponseEntity<>("Restro name is "+ restroOnlineRequest.getName()+" and owner is "+ restroOnlineRequest.getOwner() +" with contact "+ restroOnlineRequest.getContact(), HttpStatus.OK);
-        }
-
-
+        this.restroService.AddNewRestro(restroOnlineRequest);
+        return new ResponseEntity<>("Restaurant name is " + restroOnlineRequest.getName() +
+                " and owner is " + restroOnlineRequest.getOwner() + " with contact "
+                + restroOnlineRequest.getContact() + "\nAddress is "
+                + restroOnlineRequest.getStreetName() + " " + restroOnlineRequest.getCity()
+                + " " + restroOnlineRequest.getZipCode(), HttpStatus.OK);
+    }
 
 
 }

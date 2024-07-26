@@ -6,6 +6,7 @@ import com.training.test.entity.RestroDetails;
 import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
 
+import com.training.test.model.UserRegistrationRequest;
 import com.training.test.repository.RestroDetailsRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,14 @@ import java.util.List;
 public class RestroService {
 
 
-    private LoginService loginService;
+    private UserService userService;
 
     private RestroDetailsRepository restaurantDetailsRespository;
 
 
-    public RestroService(RestroDetailsRepository restroDetailsRepository, LoginService loginService) {
+    public RestroService(RestroDetailsRepository restroDetailsRepository, UserService userService) {
         this.restaurantDetailsRespository = restroDetailsRepository;
-        this.loginService = loginService;
+        this.userService = userService;
     }
 
     public void processNewRestro(RestroDetailsRequest restroDetailsRequest) {
@@ -90,8 +91,7 @@ public class RestroService {
         addressDetails.setPinCode(Integer.parseInt(restroOnlineRequest.getZipCode()));
 
 
-
-        RestroDetails restroDetails=new RestroDetails();
+        RestroDetails restroDetails = new RestroDetails();
         restroDetails.setName(restroOnlineRequest.getName());
         restroDetails.setOwnerName(restroOnlineRequest.getOwner());
         restroDetails.setAddressDetails(addressDetails);

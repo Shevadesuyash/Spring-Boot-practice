@@ -10,16 +10,10 @@ public class UserService {
 
     private UserDetailsRepository userDetailsRepository;
 
-
-
     public UserService(UserDetailsRepository userDetailsRepository) {
         this.userDetailsRepository = userDetailsRepository;
-
     }
 
-//    void authenticate() {
-//        System.out.println("User Authenticating");
-//    }
 
     public void AddNewUser(UserRegistrationRequest userRegistrationRequest) {
         UserDetails userDetails = new UserDetails();

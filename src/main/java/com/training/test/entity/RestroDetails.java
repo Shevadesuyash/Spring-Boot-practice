@@ -1,9 +1,7 @@
 package com.training.test.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
-
 
 @Entity
 @Data
@@ -16,7 +14,7 @@ public class RestroDetails {
     private int id;
 
     @Column(name = "restro_name", length = 50)
-    private String name;
+    private String restroName;
 
     @Column(name = "owner_name", length = 50)
     private String ownerName;
@@ -27,7 +25,6 @@ public class RestroDetails {
 
     @Column(name = "restro_type")
     private String restroType;
-
 
     @Column(name = "contact")
     private Long contact;

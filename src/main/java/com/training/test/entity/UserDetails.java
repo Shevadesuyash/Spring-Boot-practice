@@ -1,6 +1,5 @@
 package com.training.test.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 

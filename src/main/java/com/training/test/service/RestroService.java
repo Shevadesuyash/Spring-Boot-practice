@@ -5,18 +5,22 @@ import com.training.test.entity.RestroDetails;
 import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
 import com.training.test.repository.RestroDetailsRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 
+@Slf4j
 @Service
 public class RestroService {
 
     private UserService userService;
 
     private RestroDetailsRepository restaurantDetailsRespository;
+
 
     public RestroService(RestroDetailsRepository restroDetailsRepository, UserService userService) {
         this.restaurantDetailsRespository = restroDetailsRepository;
@@ -27,6 +31,7 @@ public class RestroService {
     public int processNewRestro() {
 
         RestaurantAddressDetails addressDetails = new RestaurantAddressDetails();
+        log.info("Processing new restaurant");
         addressDetails.setStreetName("Koregaon Park");
         addressDetails.setCity("Pune");
         addressDetails.setPinCode(411030);
@@ -39,8 +44,7 @@ public class RestroService {
         restaurantDetails.setContact(1234567890L);
 
         restaurantDetailsRespository.save(restaurantDetails);
-
-        System.out.print("New Restro name Blue Nile added at " + restaurantDetails.getId());
+        log.info("New restaurant Blue Nile added with ID: {}", restaurantDetails.getId());
         return restaurantDetails.getId();
     }
 
@@ -49,6 +53,11 @@ public class RestroService {
         List<RestroDetails> restaurantDetails = null;
 
         restaurantDetails = restaurantDetailsRespository.findAll();
+
+        if (restaurantDetails.isEmpty()) {
+            log.warn("No restaurant details found");
+            return null;
+        }
 
         return restaurantDetails.getFirst();
     }
@@ -62,6 +71,9 @@ public class RestroService {
             RestroDetails restroDetails = restaurantDetails.get();
             restroDetails.setRestroName(restroDetailsRequest.getName());
             restaurantDetailsRespository.save(restroDetails);
+        } else {
+            log.warn("Restaurant details not found for ID: {}", restroDetailsRequest.getId());
+            return null;
         }
 
         return restaurantDetails.get();
@@ -77,7 +89,7 @@ public class RestroService {
             //restroDetails.delete();
             // restaurantDetailsRespository.save(restroDetails);
         }
-        System.out.println("Restrarant is deleted  :   " + restroDetailsRequest.getId());
+        log.info("Restrarant is deleted  :   {}",restroDetailsRequest.getId());
     }
 
 
@@ -96,7 +108,7 @@ public class RestroService {
         restroDetails.setContact(Long.parseLong(restroOnlineRequest.getContact()));
 
         restaurantDetailsRespository.save(restroDetails);
-        System.out.println("New Restro added  :   " + restroOnlineRequest.getName());
+        log.info("New Restro added  : {}" ,restroOnlineRequest.getName());
     }
 
 

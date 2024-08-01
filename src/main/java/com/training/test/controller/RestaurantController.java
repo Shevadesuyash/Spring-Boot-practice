@@ -5,6 +5,7 @@ import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
 import com.training.test.service.RestroService;
 import com.training.test.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class RestaurantController {
         this.userService = userService;
     }
 
-
+    @Operation(summary = "Restaurant onboarding", description = "Restaurant is live ")
     @GetMapping("/new")
     public ResponseEntity<String> getRestaurants() {
         log.info("Received request For GET");
@@ -86,5 +87,14 @@ public class RestaurantController {
     public ResponseEntity<List<RestroDetails>> getVegRestro() {
         List<RestroDetails> vegOnlyRestro = restroService.getVegOnlyRestro();
         return new ResponseEntity<>(vegOnlyRestro, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/allRestro")
+    public ResponseEntity<List<RestroDetails>> getallRestro() {
+        List<RestroDetails> allRestro = restroService.allRestro();
+        log.info("getAllRestro");
+        return new ResponseEntity<>(allRestro, HttpStatus.OK);
+
     }
 }

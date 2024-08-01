@@ -13,4 +13,5 @@ public interface RestroDetailsRepository extends JpaRepository<RestroDetails, In
 
     @Query(value = "select * from restro_details where restro_type = 'veg'", nativeQuery = true)
     List<RestroDetails> getVegOnlyRestro();
+
 }

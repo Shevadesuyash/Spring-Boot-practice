@@ -1,5 +1,6 @@
 package com.training.test.controller;
 
+import com.training.test.model.LoginRequest;
 import com.training.test.model.UserRegistrationRequest;
 import com.training.test.service.RestroService;
 import com.training.test.service.UserService;
@@ -27,5 +28,15 @@ public class AuthenticationController {
 
         this.userService.AddNewUser(userRegistrationRequest);
         return new ResponseEntity<>("User name is " + userRegistrationRequest.getUserName(), HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+        boolean isAuthenticated = userService.authenticateUser(loginRequest);
+        if (isAuthenticated) {
+            return new ResponseEntity<>("Login successful!", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Invalid username or password.", HttpStatus.UNAUTHORIZED);
+        }
     }
 }

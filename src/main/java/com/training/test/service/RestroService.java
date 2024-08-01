@@ -115,6 +115,10 @@ public class RestroService {
     public List<RestroDetails> getVegOnlyRestro() {
         return restaurantDetailsRespository.getVegOnlyRestro();
     }
+
+    public List<RestroDetails> allRestro() {
+        return restaurantDetailsRespository.findAll();
+    }
 }
 
 

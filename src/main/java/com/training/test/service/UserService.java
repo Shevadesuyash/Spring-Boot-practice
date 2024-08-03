@@ -5,6 +5,9 @@ import com.training.test.model.LoginRequest;
 import com.training.test.model.UserRegistrationRequest;
 import com.training.test.repository.UserDetailsRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,7 +23,9 @@ public class UserService {
     }
 
 
-    public void AddNewUser(UserRegistrationRequest userRegistrationRequest) {
+    public String addNewUser(UserRegistrationRequest userRegistrationRequest) {
+
+
         UserDetails userDetails = new UserDetails();
         userDetails.setFirstName(userRegistrationRequest.getFirstName());
         userDetails.setLastName(userRegistrationRequest.getLastName());
@@ -28,9 +33,25 @@ public class UserService {
         userDetails.setPhone(Long.parseLong(userRegistrationRequest.getPhone()));
         userDetails.setUsername(userRegistrationRequest.getUserName());
         userDetails.setPassword(userRegistrationRequest.getPassword());
+        try {
+            userDetailsRepository.save(userDetails);
+            log.info("New User added  : {}", userRegistrationRequest.getUserName());
+            return ("User name is " + userRegistrationRequest.getUserName());
+        } catch (RuntimeException e) {
+            if (e.toString().contains("Key (email)")) {
+                log.warn(" Email Already in use");
+                return "e -Email already in use";
+            } else if (e.toString().contains("Key (username)")) {
+                log.warn("Username Already in use");
+                return "e -Username already in use";
+            } else if (e.toString().contains(" Key (phone)")) {
+                log.warn("Mobile number is already registered");
+                return "e -Mobile number is already registered";
+            } else {
+                return "e -An error occurred during registration";
+            }
 
-        userDetailsRepository.save(userDetails);
-        log.info("New User added  : {}",userRegistrationRequest.getUserName());
+        }
 
     }
 

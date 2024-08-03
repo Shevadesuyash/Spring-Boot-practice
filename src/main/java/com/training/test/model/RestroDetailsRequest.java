@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class RestroDetailsRequest {
 
-    private int id;
+    private String id;
     private String name;
     private String owner;
     private String city;

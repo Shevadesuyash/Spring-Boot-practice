@@ -2,13 +2,14 @@ package com.training.test.service;
 
 import com.training.test.entity.RestaurantAddressDetails;
 import com.training.test.entity.RestroDetails;
+import com.training.test.model.DeleteRequest;
 import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
 import com.training.test.repository.RestroDetailsRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class RestroService {
     public int processNewRestro() {
 
         RestaurantAddressDetails addressDetails = new RestaurantAddressDetails();
-        log.info("Processing new restaurant");
+        log.info("Processing Saved restaurant");
         addressDetails.setStreetName("Koregaon Park");
         addressDetails.setCity("Pune");
         addressDetails.setPinCode(411030);
@@ -49,17 +50,35 @@ public class RestroService {
     }
 
 
-    public RestroDetails getRestro() {
-        List<RestroDetails> restaurantDetails = null;
+    public List<List> getRestro(RestroDetailsRequest request) {
+        List<List> restaurantDetails = new ArrayList<>();
 
-        restaurantDetails = restaurantDetailsRespository.findAll();
-
-        if (restaurantDetails.isEmpty()) {
-            log.warn("No restaurant details found");
-            return null;
+        if (request.getId() != null && !request.getId().equals("")) {
+            restaurantDetails.add(restaurantDetailsRespository.findById(Integer.parseInt(request.getId())).stream().toList());
+            log.info("Found restaurant with ID: {}", request.getId());
         }
-
-        return restaurantDetails.getFirst();
+        if (request.getName() != null && !request.getName().equals("")) {
+            restaurantDetails.add(restaurantDetailsRespository.findAllByRestroName(request.getName()));
+            log.info("Found restaurant with name: {}", request.getName());
+        }
+        if (request.getOwner() == null && !request.getOwner().equals("")) {
+            restaurantDetails.add(restaurantDetailsRespository.findAllByOwnerName(request.getOwner()));
+            log.info("Found restaurant with owner: {}", request.getOwner());
+        }
+        if (request.getContact() != null && !request.getContact().equals("")) {
+            restaurantDetails.add(restaurantDetailsRespository.findAllByContact(Long.parseLong(request.getContact())));
+            log.info("Found restaurant with contact: {}", request.getContact());
+        }
+        if (request.getType() != null && !request.getType().equals("")) {
+            restaurantDetails.add(restaurantDetailsRespository.findAllByRestroType(request.getType()));
+            log.info("Found restaurant with type: {}", request.getType());
+        }
+        if (restaurantDetails == null || restaurantDetails.isEmpty()) {
+            return null;
+        } else {
+            log.info("Found restaurant {}", restaurantDetails.stream().count());
+            return restaurantDetails;
+        }
     }
 
 
@@ -80,20 +99,21 @@ public class RestroService {
     }
 
 
-    public void deleteRestro(RestroDetailsRequest restroDetailsRequest) {
+    public boolean deleteRestro(DeleteRequest deleteRequest) {
         Optional<RestroDetails> restaurantDetails = null;
-
-        restaurantDetails = restaurantDetailsRespository.findById(restroDetailsRequest.getId());
+        restaurantDetails = restaurantDetailsRespository.findById(deleteRequest.getId());
         if (restaurantDetails.isPresent()) {
-            RestroDetails restroDetails = restaurantDetails.get();
-            //restroDetails.delete();
-            // restaurantDetailsRespository.save(restroDetails);
+            restaurantDetailsRespository.deleteById(deleteRequest.getId());
+            log.info("Restrarant is deleted  :   {}", deleteRequest.getId());
+            return true;
+        } else {
+            log.info("No Restrarant by id  :   {}", deleteRequest.getId());
+            return false;
         }
-        log.info("Restrarant is deleted  :   {}",restroDetailsRequest.getId());
     }
 
 
-    public void AddNewRestro(RestroOnlineRequest restroOnlineRequest) {
+    public void addNewRestro(RestroOnlineRequest restroOnlineRequest) {
 
         RestaurantAddressDetails addressDetails = new RestaurantAddressDetails();
         addressDetails.setCity(restroOnlineRequest.getCity());
@@ -108,7 +128,7 @@ public class RestroService {
         restroDetails.setContact(Long.parseLong(restroOnlineRequest.getContact()));
 
         restaurantDetailsRespository.save(restroDetails);
-        log.info("New Restro added  : {}" ,restroOnlineRequest.getName());
+        log.info("New Restro added  : {}", restroOnlineRequest.getName());
     }
 
 

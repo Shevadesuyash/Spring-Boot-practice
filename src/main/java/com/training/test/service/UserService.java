@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -59,5 +60,9 @@ public class UserService {
     public boolean authenticateUser(LoginRequest loginRequest) {
         Optional<UserDetails> userDetails = userDetailsRepository.findByUsername(loginRequest.getUserName());
         return userDetails.map(details -> details.getPassword().equals(loginRequest.getPassword())).orElse(false);
+    }
+
+    public List<UserDetails> getUserDetails() {
+        return userDetailsRepository.findAll();
     }
 }

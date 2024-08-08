@@ -1,5 +1,6 @@
 package com.training.test.controller;
 
+import com.training.test.entity.UserDetails;
 import com.training.test.model.LoginRequest;
 import com.training.test.model.UserRegistrationRequest;
 import com.training.test.service.RestroService;
@@ -7,10 +8,14 @@ import com.training.test.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = "*")
@@ -61,5 +66,16 @@ public class AuthenticationController {
         } else {
             return new ResponseEntity<>("Invalid username or password.", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+
+    @GetMapping("/details")
+    public ResponseEntity<List<UserDetails>> getUserDetails() {
+
+        List<UserDetails> userDetails = userService.getUserDetails();
+        if (!userDetails.isEmpty()) {
+            log.info("User details");
+        }
+        return new ResponseEntity<>(userDetails, HttpStatus.OK);
     }
 }

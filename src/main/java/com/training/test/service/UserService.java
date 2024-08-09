@@ -1,17 +1,17 @@
 package com.training.test.service;
 
 import com.training.test.entity.UserDetails;
+import com.training.test.model.ForgotPassword;
 import com.training.test.model.LoginRequest;
+import com.training.test.model.UserDetailResponse;
 import com.training.test.model.UserRegistrationRequest;
 import com.training.test.repository.UserDetailsRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,8 +19,10 @@ public class UserService {
 
     private UserDetailsRepository userDetailsRepository;
 
+
     public UserService(UserDetailsRepository userDetailsRepository) {
         this.userDetailsRepository = userDetailsRepository;
+
     }
 
 
@@ -62,7 +64,21 @@ public class UserService {
         return userDetails.map(details -> details.getPassword().equals(loginRequest.getPassword())).orElse(false);
     }
 
-    public List<UserDetails> getUserDetails() {
-        return userDetailsRepository.findAll();
+    public List<UserDetailResponse> getUserDetails() {
+        List<Object[]> userDetailsList = userDetailsRepository.findUserDetails();
+        return userDetailsList.stream()
+                .map(arr -> {
+                    UserDetailResponse response = new UserDetailResponse();
+                    response.setId((Integer) arr[0]);
+                    response.setUsername((String) arr[1]);
+                    response.setEmail((String) arr[2]);
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    public Optional<UserDetails> isUser(String userName) {
+        return userDetailsRepository.findByUsername(userName);
     }
 }

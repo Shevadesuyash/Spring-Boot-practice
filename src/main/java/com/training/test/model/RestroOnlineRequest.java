@@ -12,4 +12,5 @@ public class RestroOnlineRequest {
     private String type;
     private String contact;
     private String zipCode;
+    private String email;
 }

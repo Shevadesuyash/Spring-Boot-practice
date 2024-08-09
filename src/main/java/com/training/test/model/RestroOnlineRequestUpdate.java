@@ -3,9 +3,8 @@ package com.training.test.model;
 import lombok.Data;
 
 @Data
-public class RestroDetailsRequest {
-
-    private String id;
+public class RestroOnlineRequestUpdate {
+    private int id;
     private String name;
     private String owner;
     private String city;
@@ -13,6 +12,5 @@ public class RestroDetailsRequest {
     private String type;
     private String contact;
     private String zipCode;
-
-
+    private String email;
 }

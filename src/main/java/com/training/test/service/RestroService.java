@@ -3,13 +3,13 @@ package com.training.test.service;
 import com.training.test.entity.RestaurantAddressDetails;
 import com.training.test.entity.RestroDetails;
 import com.training.test.model.DeleteRequest;
-import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
+import com.training.test.model.RestroOnlineRequestUpdate;
 import com.training.test.repository.RestroDetailsRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,82 +20,57 @@ public class RestroService {
 
     private UserService userService;
 
+    private FeedbackService feedbackService;
+
     private RestroDetailsRepository restaurantDetailsRespository;
 
 
-    public RestroService(RestroDetailsRepository restroDetailsRepository, UserService userService) {
+    public RestroService(RestroDetailsRepository restroDetailsRepository, UserService userService, FeedbackService feedbackService, RestroDetailsRepository restaurantDetailsRespository) {
         this.restaurantDetailsRespository = restroDetailsRepository;
         this.userService = userService;
+        this.feedbackService = feedbackService;
     }
 
 
-    public int processNewRestro() {
+    public RestroDetails updateRestro(RestroOnlineRequestUpdate restroDetailsRequest) {
+        log.info("Attempting to update restaurant details for ID: {}", restroDetailsRequest.getId());
 
-        RestaurantAddressDetails addressDetails = new RestaurantAddressDetails();
-        log.info("Processing Saved restaurant");
-        addressDetails.setStreetName("Koregaon Park");
-        addressDetails.setCity("Pune");
-        addressDetails.setPinCode(411030);
+        Optional<RestroDetails> restaurantDetails = restaurantDetailsRespository.findById(restroDetailsRequest.getId());
 
-        RestroDetails restaurantDetails = new RestroDetails();
-        restaurantDetails.setRestroName("Blue Nile");
-        restaurantDetails.setOwnerName("Suyash Shevade");
-        restaurantDetails.setAddressDetails(addressDetails);
-        restaurantDetails.setRestroType("non-veg");
-        restaurantDetails.setContact(1234567890L);
-
-        restaurantDetailsRespository.save(restaurantDetails);
-        log.info("New restaurant Blue Nile added with ID: {}", restaurantDetails.getId());
-        return restaurantDetails.getId();
-    }
-
-
-    public List<List> getRestro(RestroDetailsRequest request) {
-        List<List> restaurantDetails = new ArrayList<>();
-
-        if (request.getId() != null && !request.getId().equals("")) {
-            restaurantDetails.add(restaurantDetailsRespository.findById(Integer.parseInt(request.getId())).stream().toList());
-            log.info("Found restaurant with ID: {}", request.getId());
-        }
-        if (request.getName() != null && !request.getName().equals("")) {
-            restaurantDetails.add(restaurantDetailsRespository.findAllByRestroName(request.getName()));
-            log.info("Found restaurant with name: {}", request.getName());
-        }
-        if (request.getOwner() == null && !request.getOwner().equals("")) {
-            restaurantDetails.add(restaurantDetailsRespository.findAllByOwnerName(request.getOwner()));
-            log.info("Found restaurant with owner: {}", request.getOwner());
-        }
-        if (request.getContact() != null && !request.getContact().equals("")) {
-            restaurantDetails.add(restaurantDetailsRespository.findAllByContact(Long.parseLong(request.getContact())));
-            log.info("Found restaurant with contact: {}", request.getContact());
-        }
-        if (request.getType() != null && !request.getType().equals("")) {
-            restaurantDetails.add(restaurantDetailsRespository.findAllByRestroType(request.getType()));
-            log.info("Found restaurant with type: {}", request.getType());
-        }
-        if (restaurantDetails == null || restaurantDetails.isEmpty()) {
-            return null;
-        } else {
-            log.info("Found restaurant {}", restaurantDetails.stream().count());
-            return restaurantDetails;
-        }
-    }
-
-
-    public RestroDetails updateRestro(RestroDetailsRequest restroDetailsRequest) {
-        Optional<RestroDetails> restaurantDetails = null;
-
-        restaurantDetails = restaurantDetailsRespository.findById(12);
         if (restaurantDetails.isPresent()) {
+            log.info("Restaurant found for ID: {}", restroDetailsRequest.getId());
+
             RestroDetails restroDetails = restaurantDetails.get();
+
+            log.debug("Updating restaurant name, owner, type, contact, and email");
             restroDetails.setRestroName(restroDetailsRequest.getName());
+            restroDetails.setOwnerName(restroDetailsRequest.getOwner());
+            restroDetails.setRestroType(restroDetailsRequest.getType());
+            restroDetails.setContact(Long.parseLong(restroDetailsRequest.getContact()));
+            restroDetails.setEmail(restroDetailsRequest.getEmail());
+
+            RestaurantAddressDetails addressDetails = restroDetails.getAddressDetails();
+            if (addressDetails == null) {
+                log.debug("No existing address found. Creating a new address entry.");
+                addressDetails = new RestaurantAddressDetails();
+            }
+            log.debug("Updating restaurant address: city={}, streetName={}, pinCode={}",
+                    restroDetailsRequest.getCity(),
+                    restroDetailsRequest.getStreetName(),
+                    restroDetailsRequest.getZipCode());
+            addressDetails.setCity(restroDetailsRequest.getCity());
+            addressDetails.setStreetName(restroDetailsRequest.getStreetName());
+            addressDetails.setPinCode(Integer.parseInt(restroDetailsRequest.getZipCode()));
+
+            restroDetails.setAddressDetails(addressDetails);
+
             restaurantDetailsRespository.save(restroDetails);
+            log.info("Successfully updated restaurant details for ID: {}", restroDetailsRequest.getId());
+            return restroDetails;
         } else {
             log.warn("Restaurant details not found for ID: {}", restroDetailsRequest.getId());
             return null;
         }
-
-        return restaurantDetails.get();
     }
 
 
@@ -126,18 +101,15 @@ public class RestroService {
         restroDetails.setAddressDetails(addressDetails);
         restroDetails.setRestroType(restroOnlineRequest.getType());
         restroDetails.setContact(Long.parseLong(restroOnlineRequest.getContact()));
+        restroDetails.setEmail(restroOnlineRequest.getEmail());
 
         restaurantDetailsRespository.save(restroDetails);
         log.info("New Restro added  : {}", restroOnlineRequest.getName());
     }
 
 
-    public List<RestroDetails> getVegOnlyRestro() {
-        return restaurantDetailsRespository.getVegOnlyRestro();
-    }
-
     public List<RestroDetails> allRestro() {
-        return restaurantDetailsRespository.findAll();
+        return restaurantDetailsRespository.findAll(Sort.by(Sort.Order.asc("id")));
     }
 }
 

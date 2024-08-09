@@ -29,5 +29,8 @@ public class RestroDetails {
     @Column(name = "contact")
     private Long contact;
 
+    @Column(name = "email")
+    private String email;
+
 
 }

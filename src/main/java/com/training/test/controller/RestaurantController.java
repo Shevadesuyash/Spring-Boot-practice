@@ -2,8 +2,9 @@ package com.training.test.controller;
 
 import com.training.test.entity.RestroDetails;
 import com.training.test.model.DeleteRequest;
-import com.training.test.model.RestroDetailsRequest;
 import com.training.test.model.RestroOnlineRequest;
+import com.training.test.model.RestroOnlineRequestUpdate;
+import com.training.test.service.FeedbackService;
 import com.training.test.service.RestroService;
 import com.training.test.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,11 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @RestController
-@RequestMapping("/restro")
 @CrossOrigin(origins = "*")
 public class RestaurantController {
 
@@ -28,28 +28,18 @@ public class RestaurantController {
 
     UserService userService;
 
+    FeedbackService feedbackService;
+
     @Value("${spring.applications.name}")
     private String Environment;
 
-    RestaurantController(RestroService restroService, UserService userService) {
+    RestaurantController(RestroService restroService, UserService userService, FeedbackService feedbackService) {
         this.restroService = restroService;
         this.userService = userService;
+        this.feedbackService = feedbackService;
     }
 
-    @Operation(summary = "Restaurant onboarding", description = "Restaurant is live ")
-    @GetMapping("/new")
-    public ResponseEntity<String> getRestaurants() {
-        log.info("Received request For GET");
-        log.info("Environment: {}", Environment);
-        return new ResponseEntity<>("This is a first GET request\nEnvironment : " + Environment, HttpStatus.OK);
-    }
 
-    @Operation(summary = "Add a saved restaurant", description = "Process and add a saved restaurant and return its ID.")
-    @GetMapping("/addSaved")
-    public ResponseEntity<String> processNewRestro() {
-        int id = restroService.processNewRestro();
-        return new ResponseEntity<>("New Restro added. ID is : " + id, HttpStatus.OK);
-    }
 
     @Operation(summary = "Delete a restaurant", description = "Delete a restaurant based on the provided ID.")
     @ApiResponses(value = {
@@ -65,23 +55,6 @@ public class RestaurantController {
         }
     }
 
-    @Operation(summary = "Post restaurant details", description = "Retrieve details of a specific restaurant.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Restaurant details returned"),
-            @ApiResponse(responseCode = "404", description = "Not Found: Restaurant details not found"),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error: Error retrieving restaurant details")
-    })
-    @PostMapping("/getDetails")
-    public ResponseEntity<List> getRestro(@RequestBody RestroDetailsRequest restroDetailsRequest) {
-        List<List> restroDetails = restroService.getRestro(restroDetailsRequest);
-
-        if (restroDetails == null) {
-            log.warn("No restaurant details found");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(restroDetails.stream().toList(), HttpStatus.OK);
-    }
 
     @Operation(summary = "Update restaurant details", description = "Update details of a specific restaurant.")
     @ApiResponses(value = {
@@ -91,10 +64,10 @@ public class RestaurantController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error: Error updating restaurant details")
     })
     @PutMapping("/updateDetails")
-    public RestroDetails updateDetails(@RequestBody RestroDetailsRequest restroDetailsRequest) {
+    public RestroDetails updateDetails(@RequestBody RestroOnlineRequestUpdate restroDetailsRequest) {
         RestroDetails updatedDetails = restroService.updateRestro(restroDetailsRequest);
         log.info("Updated restaurant details: {}", updatedDetails);
-        return this.restroService.updateRestro(restroDetailsRequest);
+        return updatedDetails;
     }
 
     @Operation(summary = "Add a new restaurant", description = "Add a new restaurant with provided details.")
@@ -110,23 +83,10 @@ public class RestaurantController {
         log.info("New restaurant added: {}", restroOnlineRequest);
         return new ResponseEntity<>("Restaurant name is " + restroOnlineRequest.getName()
                 + " and owner is " + restroOnlineRequest.getOwner() + " with contact "
-                + restroOnlineRequest.getContact() + "\nAddress is " + restroOnlineRequest.getStreetName()
+                + restroOnlineRequest.getContact() + "  Email:  "+restroOnlineRequest.getEmail()+"\nAddress is " + restroOnlineRequest.getStreetName()
                 + " " + restroOnlineRequest.getCity() + " " + restroOnlineRequest.getZipCode(), HttpStatus.OK);
     }
 
-
-    @Operation(summary = "Get all vegetarian restaurants", description = "Retrieve all vegetarian restaurants")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Vegetarian restaurants details returned"),
-            @ApiResponse(responseCode = "400", description = "Error while retrieving the restaurant."),
-            @ApiResponse(responseCode = "500", description = "Error with the server. Contact backend team")
-    })
-    @GetMapping("/vegRestro")
-    public ResponseEntity<List<RestroDetails>> getVegRestro() {
-        List<RestroDetails> vegOnlyRestro = restroService.getVegOnlyRestro();
-        return new ResponseEntity<>(vegOnlyRestro, HttpStatus.OK);
-
-    }
 
 
     @Operation(summary = "Get all restaurant details", description = "Retrieve all restaurant entries stored in the database")

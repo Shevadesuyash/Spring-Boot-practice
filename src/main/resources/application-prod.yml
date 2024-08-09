@@ -1,0 +1,27 @@
+server:
+  port: 8083
+
+spring:
+  applications:
+    name: PROD PROFILE
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres-db
+    password: 2545
+    driverClassName: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    root: INFO
+    com.training.test: DEBUG
+
+
+
+
+

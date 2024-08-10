@@ -10,16 +10,24 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /home/suyash/git project/postgres_data:/var/lib/postgresql/data
-
+      - "/home/suyash/git_project/postgres_data:/var/lib/postgresql/data"
+        # Updated path with respect to the your database path where you want to create save data
+        # Updated path with respect to  your database path where you want to create save data
+        # like "{Your local machine Folder path }/postgres_data:/var/lib/postgresql/data"
   app:
-    image: restro-mini-project:1.0
+    image: suyash30/restro-mini-project:latest
     environment:
       SPRING_PROFILES_ACTIVE: uat
-      SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.58.187:5432/mydb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.58.187:5432/mydb # update database url
+      # you can also use the localhost IF POSTGRES is in your machine
+      # eg. SPRING_DATASTORE_URL: jdbc:postgresql://localhost:5432/mydb
+      #also by Machin IP address
+      #eg. SPRING_DATASTORE_URL: jdbc:postgresql://{Local Machine Address }:5432/mydb
+
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: mypassword
     ports:
-      - "8080:8081"
+      - "8080:8081" #8080 is the local port number,You can change this by
+        # - {Available port numbers} : 8081
     depends_on:
       - db

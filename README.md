@@ -22,7 +22,7 @@ The **Restro Mini Project** is aimed at providing a backend service for restaura
 The application is containerized using Docker, making it easy to deploy and run on any system that supports Docker.
 
 - **Image Name:** `suyash30/restro-mini-project`
-- **Version:** `1.1`
+- **Version:** `1.2`
 - **Repository:** [Docker Hub](https://hub.docker.com/r/suyash30/restro-mini-project)
 
 ## Prerequisites
@@ -39,7 +39,7 @@ Follow the steps below to run the application using Docker:
 1. **Pull the Docker Image:**
 
    ```bash
-   docker pull suyash30/restro-mini-project:1.1 
+   docker pull suyash30/restro-mini-project:1.2 
   
 2. **Set Up and Start Services:**
 

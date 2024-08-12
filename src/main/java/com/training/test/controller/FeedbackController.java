@@ -1,5 +1,7 @@
 package com.training.test.controller;
 
+import com.training.test.entity.FeedbackRestro;
+import com.training.test.entity.FeedbackSite;
 import com.training.test.model.FeedbackRestroRequest;
 import com.training.test.model.FeedbackSiteRequest;
 import com.training.test.service.FeedbackService;
@@ -12,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -57,4 +61,25 @@ public class FeedbackController {
             return new ResponseEntity<>("Feedback not received", HttpStatus.BAD_REQUEST);
         }
     }
+
+    @Operation(summary = "Get all restaurant feedback", description = "Retrieve all feedback related to restaurants.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved feedback"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/feedback-restro")
+    public ResponseEntity<List<FeedbackRestro>> getAllFeedbackRestro() {
+        return new ResponseEntity<>(feedbackService.getAllFeedbackResto(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "Get all site feedback", description = "Retrieve all feedback related to the site.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved feedback"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/feedback-site")
+    public ResponseEntity<List<FeedbackSite>> getAllFeedbackSite() {
+        return new ResponseEntity<>(feedbackService.getAllFeedbackSite(), HttpStatus.OK);
+    }
+
 }

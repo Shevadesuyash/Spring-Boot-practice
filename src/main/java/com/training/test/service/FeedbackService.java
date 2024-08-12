@@ -13,6 +13,8 @@ import com.training.test.repository.RestroDetailsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -64,4 +66,11 @@ public class FeedbackService {
         return savedFeedback.getId();
     }
 
+    public List<FeedbackRestro> getAllFeedbackResto() {
+        return feedbackRestroRepository.findAll();
+    }
+
+    public List<FeedbackSite> getAllFeedbackSite() {
+        return feedbackSiteRepository.findAll();
+    }
 }

@@ -22,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("/restro")
 public class RestaurantController {
 
     RestroService restroService;

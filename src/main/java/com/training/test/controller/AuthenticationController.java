@@ -22,6 +22,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping("/users")
 public class AuthenticationController {
 
     RestroService restroService;

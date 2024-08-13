@@ -14,8 +14,13 @@ services:
         # Updated path with respect to the your database path where you want to create save data
         # Updated path with respect to  your database path where you want to create save data
         # like "{Your local machine Folder path }/postgres_data:/var/lib/postgresql/data"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U myuser -d mydb" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   app:
-    image: suyash30/restro-mini-project:1.1
+    image: suyash30/restro-mini-project:1.3
     environment:
       SPRING_PROFILES_ACTIVE: uat
       SPRING_DATASOURCE_URL: jdbc:postgresql://192.168.58.187:5432/mydb # update database url
